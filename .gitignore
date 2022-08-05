@@ -1,0 +1,12 @@
+# Visual Studio 2015 cache/options directory
+.vs/
+.idea/
+*.DS_Store
+/BE/sitecore/Website/Website.Container/Properties/PublishProfiles/Local deployment - AB - Website.pubxml
+/BE/sitecore/Website/Website.Container/Properties/PublishProfiles/Local deployment - AB - Folder.pubxml
+/BE/sitecore/Project/Discovery.Project.Website/Properties/PublishProfiles/FolderProfile.pubxml
+/BE/sitecore/Feature/Discovery.Feature.LotPages/Properties/PublishProfiles/FolderProfile.pubxml
+/QA/UITestAutomation/UITestAutomation/packages
+/QA/UITestAutomation/UITestAutomation/UITestAutomation/bin/Debug
+/QA/UITestAutomation/UITestAutomation/UITestAutomation/obj/Debug
+/BE/sitecore/Feature/Discovery.Feature.PrivateSales/Properties/PublishProfiles/FolderProfile.pubxml
