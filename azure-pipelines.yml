@@ -10,8 +10,22 @@ pool:
   vmImage: windows-latest
 
 variables:
-  buildConfiguration: 'Release'
+  buildConfiguration: 'Release',
+  dotNetSdk: '3.1'
 
 steps:
+
+- task: UseDotNet@2
+  displayName: 'Use .NET SDK $(dotNetSdk)'
+  inputs:
+    packageType: sdk
+    version: '$(dotNetSdk)'
+    
+- task: DotNetCoreCLI@2
+  displayName: 'Restore project dependencies'
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'
+    
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
