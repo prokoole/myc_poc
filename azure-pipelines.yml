@@ -17,42 +17,42 @@ stages:
 
 - stage: 'Build'
   displayName: 'Build the web application'
-  jobs:
   
+  jobs:
   - job: 'Build'
     displayName: 'Build job'
     pool:
       vmImage: $(vmImageName)
       
-      steps:
+    steps:
 
-      - task: UseDotNet@2
-        displayName: 'Use .NET SDK $(dotNetSdk)'
-        inputs:
-          packageType: sdk
-          version: '$(dotNetSdk)'
+    - task: UseDotNet@2
+      displayName: 'Use .NET SDK $(dotNetSdk)'
+      inputs:
+        packageType: sdk
+        version: '$(dotNetSdk)'
     
-      - task: DotNetCoreCLI@2
-        displayName: 'Restore project dependencies'
-        inputs:
-          command: 'restore'
-          projects: '**/*.csproj'
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore project dependencies'
+      inputs:
+        command: 'restore'
+        projects: '**/*.csproj'
     
-      - script: dotnet build --configuration $(buildConfiguration)
-        displayName: 'dotnet build $(buildConfiguration)'
+    - script: dotnet build --configuration $(buildConfiguration)
+      displayName: 'dotnet build $(buildConfiguration)'
   
-      - task: DotNetCoreCLI@2
-        displayName: 'Publish the project - $(buildConfiguration)'
-        inputs:
-          command: 'publish'
-          projects: '**/*.csproj'
-          publishWebProjects: false
-          arguments: '--no-build --configuration Release --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
-          zipAfterPublish: true
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish the project - $(buildConfiguration)'
+      inputs:
+        command: 'publish'
+        projects: '**/*.csproj'
+        publishWebProjects: false
+        arguments: '--no-build --configuration Release --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
+        zipAfterPublish: true
 
-      - task: PublishBuildArtifacts@1
-        displayName: 'Publish Artifact: drop'
-        condition: succeeded()
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: drop'
+      condition: succeeded()
   
 - stage: 'Deploy'
   displayName: 'Deploy the web application'
