@@ -58,24 +58,60 @@ stages:
   displayName: 'Deploy the web application'
   dependsOn: Build
   jobs:
-  - deployment: Deploy
-    pool:
-      vmImage: $(vmImageName)
-    environment: myc-poc-test-env
+  - job : 'Transform'
+  
+    steps:
+    
     variables:
-    - group: test
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - download: current
-            artifact: drop
-          - task: AzureWebApp@1
-            displayName: 'Azure App Service Deploy: website'
+      group: TestAppSettingsConfigTransformation
+    
+    - task: ExtractFiles@1
             inputs:
-              azureSubscription: 'Service connection to MYC POC'
-              appName: '$(WebAppName)'
-              package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip'
+              archiveFilePatterns: '$(Pipeline.Workspace)/**/*.zip'
+              destinationFolder: '$(Pipeline.Workspace)/application'
+              cleanDestinationFolder: true
+              overwriteExistingFiles: false
+              
+    - task: FileTransform@1
+      displayname: 'Running file tranformation'
+      inputs:
+        folderPath: '$(Pipeline.Workspace)/application'
+        fileType: 'json'
+        targetFiles: 'appsettings.json'
+        
+    - task: DeleteFiles@1
+        inputs:
+          SourceFolder: '$(Pipeline.Workspace)/drop/'
+          Contents: '*.zip'
+          
+    - task: ArchiveFiles@2
+        inputs:
+          rootFolderOrFile: '$(Pipeline.Workspace)/application/'
+          includeRootFolder: false
+          archiveType: 'zip'
+          archiveFile: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/$(Build.BuildId).zip'
+          replaceExistingArchive: true          
+          
+  - job: Deploy
+  dependsOn: Transform
+    - deployment: Deploy
+      pool:
+        vmImage: $(vmImageName)
+      environment: myc-poc-test-env
+      variables:
+      - group: test
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - download: current
+              artifact: drop
+            - task: AzureWebApp@1
+              displayName: 'Azure App Service Deploy: website'
+              inputs:
+                azureSubscription: 'Service connection to MYC POC'
+                appName: '$(WebAppName)'
+                package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip'
 
 - stage: 'Deploy_fakeprod'
   displayName: 'Deploy the web application'
