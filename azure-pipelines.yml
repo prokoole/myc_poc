@@ -77,7 +77,7 @@ stages:
               appName: '$(WebAppName)'
               package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip'
 
-- stage: 'Deploy fake prod'
+- stage: 'Deploy_fakeprod'
   displayName: 'Deploy the web application'
   dependsOn: Deploy
   jobs:
