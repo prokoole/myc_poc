@@ -72,7 +72,7 @@ stages:
     - task: ExtractFiles@1
       displayName: 'Extracting files'
       inputs:
-        archiveFilePatterns: '**/*.zip'
+        archiveFilePatterns: '$(Build.ArtifactStagingDirectory)/drop/$(buildConfiguration)/*.zip'
         destinationFolder: '$(Pipeline.Workspace)/application'
         cleanDestinationFolder: true
         overwriteExistingFiles: false
@@ -85,7 +85,7 @@ stages:
     - task: DeleteFiles@1
       displayName: 'Clean files'
       inputs:
-        SourceFolder: '$(Pipeline.Workspace)/drop/'
+        SourceFolder: '$(Build.ArtifactStagingDirectory)/drop/'
         Contents: '*.zip'
     - task: ArchiveFiles@2
       displayName: 'Archive files'
@@ -93,7 +93,7 @@ stages:
         rootFolderOrFile: '$(Pipeline.Workspace)/application/'
         includeRootFolder: false
         archiveType: 'zip'
-        archiveFile: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/$(Build.BuildId).zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/drop/$(buildConfiguration)/$(Build.BuildId).zip'
         replaceExistingArchive: true          
   - deployment: Deploy
     displayName: 'Deployment process'
