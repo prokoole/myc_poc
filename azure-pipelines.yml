@@ -48,6 +48,7 @@ stages:
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifact: drop'
       condition: succeeded()
+      
 - stage: 'DeployTest'
   displayName: 'Deploy the web application'
   dependsOn: Build
@@ -104,7 +105,7 @@ stages:
                     package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip'
 - stage: 'Deploy_fakeprod'
   displayName: 'Deploy the web application'
-  dependsOn: Deploy
+  dependsOn: DeployTest
   jobs:
   - deployment: Deploy
     pool:
