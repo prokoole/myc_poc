@@ -6,8 +6,6 @@
 trigger:
 - master
 
-
-
 variables:
   buildConfiguration: 'Release'
   dotNetSdk: '3.x'
@@ -58,7 +56,7 @@ stages:
   displayName: 'Deploy the web application'
   dependsOn: Build
   jobs:
-  - job : 'Transform'
+  - job: 'Transform'
   
   variables:
     group: TestAppSettingsConfigTransformation
@@ -96,6 +94,7 @@ stages:
         replaceExistingArchive: true          
           
   - job: 'Deployment'
+    displayName: 'Deployment process'
     dependsOn: Transform
     - deployment: Deploy
       pool:
