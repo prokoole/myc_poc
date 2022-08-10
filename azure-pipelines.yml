@@ -58,8 +58,8 @@ stages:
   jobs:
   - job: 'Transform'
   
-  variables:
-    group: TestAppSettingsConfigTransformation
+    variables:
+        group: TestAppSettingsConfigTransformation
   
     steps:
     
