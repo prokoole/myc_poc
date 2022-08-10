@@ -74,7 +74,7 @@ stages:
         overwriteExistingFiles: false
               
     - task: FileTransform@1
-      displayname: 'Running file tranformation'
+      displayName: 'Running file tranformation'
       inputs:
         folderPath: '$(Pipeline.Workspace)/application'
         fileType: 'json'
@@ -96,7 +96,7 @@ stages:
         replaceExistingArchive: true          
           
   - job: 'Deployment'
-  dependsOn: Transform
+    dependsOn: Transform
     - deployment: Deploy
       pool:
         vmImage: $(vmImageName)
