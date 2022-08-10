@@ -72,7 +72,7 @@ stages:
     - task: ExtractFiles@1
       displayName: 'Extracting files'
       inputs:
-        archiveFilePatterns: '**/*.zip'
+        archiveFilePatterns: '$(System.ArtifactsDirectory)/**/*.zip'
         destinationFolder: '$(Pipeline.Workspace)/application'
         cleanDestinationFolder: true
         overwriteExistingFiles: false
