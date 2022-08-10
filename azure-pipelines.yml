@@ -95,7 +95,7 @@ stages:
         archiveFile: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/$(Build.BuildId).zip'
         replaceExistingArchive: true          
           
-  - job: Deploy
+  - job: 'Deployment'
   dependsOn: Transform
     - deployment: Deploy
       pool:
