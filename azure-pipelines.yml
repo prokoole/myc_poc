@@ -50,6 +50,7 @@ stages:
       inputs:
         targetPath: '$(Build.ArtifactStagingDirectory)'
         publishLocation: 'pipeline'
+        artifactName: 'drop'
       
 - stage: 'DeployTest'
   displayName: 'Deploy the web application'
@@ -75,7 +76,7 @@ stages:
     - task: ExtractFiles@1
       displayName: 'Extracting files'
       inputs:
-        archiveFilePatterns: '$(Build.ArtifactStagingDirectory)/**/*.zip'
+        archiveFilePatterns: '*.zip'
         destinationFolder: '$(Pipeline.Workspace)/application'
         cleanDestinationFolder: true
         overwriteExistingFiles: false
