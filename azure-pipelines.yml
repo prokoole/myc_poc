@@ -55,6 +55,8 @@ stages:
 - stage: 'Deploy'
   displayName: 'Deploy the web application'
   dependsOn: Build
+  pool:
+    vmImage: $(vmImageName)
   jobs:
   - job: 'Transform'
   
@@ -97,8 +99,6 @@ stages:
     displayName: 'Deployment process'
     dependsOn: Transform
     - deployment: Deploy
-      pool:
-        vmImage: $(vmImageName)
       environment: myc-poc-test-env
       variables:
       - group: test
