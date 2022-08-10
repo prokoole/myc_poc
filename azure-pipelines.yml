@@ -45,12 +45,9 @@ stages:
         arguments: '--no-build --configuration Release --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
         zipAfterPublish: true
 
-    # Package the file and uploads them as an artifact of the build
-    - task: PublishPipelineArtifact@1
-      inputs:
-        targetPath: '$(Build.ArtifactStagingDirectory)'
-        publishLocation: 'pipeline'
-        artifactName: 'drop'
+    - publish: '$(Build.ArtifactStagingDirectory)'
+      displayName: 'Publish art'
+      artifact: 'drop'
       
 - stage: 'DeployTest'
   displayName: 'Deploy the web application'
@@ -73,10 +70,14 @@ stages:
           Write-Host "$(Pipeline.Workspace)"
           Write-Host "$(System.ArtifactsDirectory)"
           
+    - download: current
+      displayName: 'Download Artifact drop'
+      artifact: 'drop'
+      
     - task: ExtractFiles@1
       displayName: 'Extracting files'
       inputs:
-        archiveFilePatterns: '$(Build.ArtifactStagingDirectory)/$(buildConfiguration)/*.zip'
+        archiveFilePatterns: '$(Pipeline.Workspace)/**/*.zip'
         destinationFolder: '$(Pipeline.Workspace)/application'
         cleanDestinationFolder: true
         overwriteExistingFiles: false
@@ -87,18 +88,14 @@ stages:
         folderPath: '$(Pipeline.Workspace)/application'
         fileType: 'json'
         targetFiles: 'appsettings.json'
-    - task: DeleteFiles@1
-      displayName: 'Clean files'
-      inputs:
-        SourceFolder: '$(Build.ArtifactStagingDirectory)/drop/'
-        Contents: '*.zip'
+
     - task: ArchiveFiles@2
       displayName: 'Archive files'
       inputs:
         rootFolderOrFile: '$(Pipeline.Workspace)/application/'
         includeRootFolder: false
         archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/drop/$(buildConfiguration)/$(Build.BuildId).zip'
+        archiveFile: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/$(Build.BuildId).zip'
         replaceExistingArchive: true          
   - deployment: Deploy
     displayName: 'Deployment process'
