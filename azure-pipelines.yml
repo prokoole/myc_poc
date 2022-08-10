@@ -60,10 +60,12 @@ stages:
   jobs:
   - job : 'Transform'
   
+  variables:
+    group: TestAppSettingsConfigTransformation
+  
     steps:
     
-    variables:
-      group: TestAppSettingsConfigTransformation
+
     
     - task: ExtractFiles@1
       displayName: 'Extracting files'
