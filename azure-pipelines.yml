@@ -45,9 +45,11 @@ stages:
         arguments: '--no-build --configuration Release --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
         zipAfterPublish: true
 
-    - task: PublishBuildArtifacts@1
-      displayName: 'Publish Artifact: drop'
-      condition: succeeded()
+    # Package the file and uploads them as an artifact of the build
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)'
+        publishLocation: 'pipeline'
       
 - stage: 'DeployTest'
   displayName: 'Deploy the web application'
@@ -69,13 +71,15 @@ stages:
           Write-Host "$(System.ArtifactsDirectory)"
           Write-Host "$(Pipeline.Workspace)"
           Write-Host "$(System.ArtifactsDirectory)"
+          
     - task: ExtractFiles@1
       displayName: 'Extracting files'
       inputs:
-        archiveFilePatterns: '$(Build.ArtifactStagingDirectory)/drop/$(buildConfiguration)/*.zip'
+        archiveFilePatterns: '$(Pipeline.Workspace)/**/*.zip'
         destinationFolder: '$(Pipeline.Workspace)/application'
         cleanDestinationFolder: true
         overwriteExistingFiles: false
+        
     - task: FileTransform@1
       displayName: 'Running file tranformation'
       inputs:
