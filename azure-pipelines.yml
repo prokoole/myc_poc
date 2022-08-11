@@ -57,7 +57,7 @@ stages:
   jobs:
   - job: 'Transform and deploy'
     variables:
-        group: TestAppSettingsConfigTransformation
+      group: TestAppSettingsConfigTransformation
     environment: myc-poc-test-env
     steps:
   
