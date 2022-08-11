@@ -49,54 +49,57 @@ stages:
       displayName: 'Publish art'
       artifact: 'drop'
       
-- stage: 'DeployTest'
-  displayName: 'Deploy the web application'
+- stage: 'Deploy_test'
+  displayName: 'Deploy the web application to test'
   dependsOn: Build
-  pool:
-    vmImage: $(vmImageName)
   jobs:
-  - job: 'Transform_and_deploy'
+  - deployment: Deploy
+    pool:
+      vmImage: $(vmImageName)
+    environment: myc-poc-test-env
     variables:
-    - group: TestAppSettingsConfigTransformation
     - group: test
-    
-    steps:
-  
-    - download: current
-      displayName: 'Download Artifact drop'
-      artifact: 'drop'
-      
-    - task: ExtractFiles@1
-      displayName: 'Extract config files'
-      inputs:
-        archiveFilePatterns: '$(Pipeline.Workspace)/**/*.zip'
-        destinationFolder: '$(Pipeline.Workspace)/application'
-        cleanDestinationFolder: true
-        overwriteExistingFiles: false
+    - group: TestAppSettingsConfigTransformation
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          
+          - download: current
+            displayName: 'Download Artifact drop'
+            artifact: drop
+            
+          - task: ExtractFiles@1
+            displayName: 'Extract config files'
+            inputs:
+              archiveFilePatterns: '$(Pipeline.Workspace)/**/*.zip'
+              destinationFolder: '$(Pipeline.Workspace)/application'
+              cleanDestinationFolder: true
+              overwriteExistingFiles: false
         
-    - task: FileTransform@1
-      displayName: 'Run file tranformation'
-      inputs:
-        folderPath: '$(Pipeline.Workspace)/application'
-        fileType: 'json'
-        targetFiles: 'appsettings.json'
+          - task: FileTransform@1
+            displayName: 'Run file tranformation'
+            inputs:
+              folderPath: '$(Pipeline.Workspace)/application'
+              fileType: 'json'
+              targetFiles: 'appsettings.json'
 
-    - task: ArchiveFiles@2
-      displayName: 'Archive files'
-      inputs:
-        rootFolderOrFile: '$(Pipeline.Workspace)/application/'
-        includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/$(Build.BuildId).zip'
-        replaceExistingArchive: true          
-        
-    - task: AzureWebApp@1
-      displayName: 'Deploy App Service with updated config files'
-      inputs:
-        azureSubscription: 'Service connection to MYC POC'
-        appName: '$(WebAppName)'
-        package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/$(Build.BuildId).zip'
-                    
+          - task: ArchiveFiles@2
+            displayName: 'Archive files'
+            inputs:
+              rootFolderOrFile: '$(Pipeline.Workspace)/application/'
+              includeRootFolder: false
+              archiveType: 'zip'
+              archiveFile: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/$(Build.BuildId).zip'
+              replaceExistingArchive: true 
+            
+          - task: AzureWebApp@1
+            displayName: 'Azure App Service Deploy: website'
+            inputs:
+              azureSubscription: 'Service connection to MYC POC'
+              appName: '$(WebAppName)'
+              package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/$(Build.BuildId).zip'
+              
 - stage: 'Deploy_fakeprod'
   displayName: 'Deploy the web application'
   dependsOn: DeployTest
