@@ -55,9 +55,10 @@ stages:
   pool:
     vmImage: $(vmImageName)
   jobs:
-  - job: 'Transform'
+  - job: 'Transform and deploy'
     variables:
         group: TestAppSettingsConfigTransformation
+    environment: myc-poc-test-env
     steps:
   
     - download: current
@@ -65,7 +66,7 @@ stages:
       artifact: 'drop'
       
     - task: ExtractFiles@1
-      displayName: 'Extracting files'
+      displayName: 'Extract config files'
       inputs:
         archiveFilePatterns: '$(Pipeline.Workspace)/**/*.zip'
         destinationFolder: '$(Pipeline.Workspace)/application'
@@ -73,7 +74,7 @@ stages:
         overwriteExistingFiles: false
         
     - task: FileTransform@1
-      displayName: 'Running file tranformation'
+      displayName: 'Run file tranformation'
       inputs:
         folderPath: '$(Pipeline.Workspace)/application'
         fileType: 'json'
@@ -89,7 +90,9 @@ stages:
         replaceExistingArchive: true          
         
     - task: AzureWebApp@1
-      displayName: 'Deploy App Service'
+      displayName: 'Deploy App Service with updated config files'
+      variables:
+      - group: test
       inputs:
         azureSubscription: 'Service connection to MYC POC'
         appName: '$(WebAppName)'
