@@ -102,7 +102,7 @@ stages:
               
 - stage: 'Deploy_fakeprod'
   displayName: 'Deploy the web application'
-  dependsOn: DeployTest
+  dependsOn: Deploy_test
   jobs:
   - deployment: Deploy
     pool:
