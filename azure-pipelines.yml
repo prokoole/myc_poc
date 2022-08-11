@@ -58,7 +58,8 @@ stages:
   - job: 'Transform and deploy'
     variables:
       group: TestAppSettingsConfigTransformation
-    environment: myc-poc-test-env
+      group: test
+    
     steps:
   
     - download: current
@@ -91,8 +92,7 @@ stages:
         
     - task: AzureWebApp@1
       displayName: 'Deploy App Service with updated config files'
-      variables:
-      - group: test
+      environment: myc-poc-test-env
       inputs:
         azureSubscription: 'Service connection to MYC POC'
         appName: '$(WebAppName)'
