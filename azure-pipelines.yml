@@ -87,22 +87,13 @@ stages:
         archiveType: 'zip'
         archiveFile: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/$(Build.BuildId).zip'
         replaceExistingArchive: true          
-  - deployment: Deploy
-    displayName: 'Deployment process'
-    dependsOn: Transform
-    environment: myc-poc-test-env
-    variables:
-    - group: test
-    strategy:
-        runOnce:
-            deploy:
-                steps:
-                - task: AzureWebApp@1
-                  displayName: 'Azure App Service Deploy: website'
-                  inputs:
-                    azureSubscription: 'Service connection to MYC POC'
-                    appName: '$(WebAppName)'
-                    package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/$(Build.BuildId).zip'
+        
+    - task: AzureWebApp@1
+      displayName: 'Deploy App Service'
+      inputs:
+        azureSubscription: 'Service connection to MYC POC'
+        appName: '$(WebAppName)'
+        package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/$(Build.BuildId).zip'
                     
 - stage: 'Deploy_fakeprod'
   displayName: 'Deploy the web application'
