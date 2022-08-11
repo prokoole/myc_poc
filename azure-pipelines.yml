@@ -55,7 +55,7 @@ stages:
   pool:
     vmImage: $(vmImageName)
   jobs:
-  - job: 'Transform and deploy'
+  - job: 'Transform_and_deploy'
     variables:
     - group: TestAppSettingsConfigTransformation
     - group: test
@@ -92,7 +92,6 @@ stages:
         
     - task: AzureWebApp@1
       displayName: 'Deploy App Service with updated config files'
-      environment: myc-poc-test-env
       inputs:
         azureSubscription: 'Service connection to MYC POC'
         appName: '$(WebAppName)'
