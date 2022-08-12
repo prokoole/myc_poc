@@ -60,6 +60,8 @@ stages:
     variables:
     - group: test
     - group: TestAppSettingsConfigTransformation
+    - name: 'ConnectionStrings.AzureAppConfig'
+    - value: '$[variables.ConnectionStringsAzureAppConfig]'
     strategy:
       runOnce:
         deploy:
