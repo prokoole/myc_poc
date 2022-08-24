@@ -101,26 +101,3 @@ stages:
               azureSubscription: 'Service connection to MYC POC'
               appName: '$(WebAppName)'
               package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/$(Build.BuildId).zip'
-              
-- stage: 'Deploy_fakeprod'
-  displayName: 'Deploy the web application'
-  dependsOn: Deploy_test
-  jobs:
-  - deployment: Deploy
-    pool:
-      vmImage: $(vmImageName)
-    environment: myc-poc-prod-env
-    variables:
-    - group: prod
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - download: current
-            artifact: drop
-          - task: AzureWebApp@1
-            displayName: 'Azure App Service Deploy: website'
-            inputs:
-              azureSubscription: 'Service connection to MYC POC'
-              appName: '$(WebAppName)'
-              package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip'
