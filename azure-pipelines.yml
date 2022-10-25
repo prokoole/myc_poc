@@ -49,8 +49,8 @@ stages:
       displayName: 'Publish art'
       artifact: 'drop'
       
-- stage: 'Deploy_test'
-  displayName: 'Deploy the web application to test'
+- stage: 'Deploy'
+  displayName: 'Deploy the web application'
   dependsOn: Build
   jobs:
   - deployment: Deploy
